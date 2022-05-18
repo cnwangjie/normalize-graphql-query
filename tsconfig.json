@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "module": "ES6",
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "incremental": true,
+    "allowSyntheticDefaultImports": true,
+    "lib": [
+      "ES2020",
+    ],
+    "target": "ESNext",
+    "moduleResolution": "node",
+    "outDir": "dist/esm",
+    "declaration": true,
+    "declarationDir": "types",
+    "types": [
+      "jest",
+    ]
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "**/*.test.ts",
+  ]
+}
