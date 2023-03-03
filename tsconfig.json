@@ -11,22 +11,12 @@
     "sourceMap": true,
     "incremental": true,
     "allowSyntheticDefaultImports": true,
-    "lib": [
-      "ES2020",
-    ],
+    "lib": ["ESNext"],
     "target": "ESNext",
     "moduleResolution": "node",
     "outDir": "dist/esm",
     "declaration": true,
     "declarationDir": "types",
-    "types": [
-      "jest",
-    ]
-  },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "**/*.test.ts",
-  ]
+    "types": ["node", "jest"]
+  }
 }
