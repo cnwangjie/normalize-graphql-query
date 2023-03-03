@@ -3,7 +3,7 @@
     "strict": true,
     "alwaysStrict": true,
     "strictNullChecks": true,
-    "module": "ES6",
+    "module": "commonjs",
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -20,6 +20,7 @@
     "declaration": true,
     "declarationDir": "types",
     "types": [
+      "node",
       "jest",
     ]
   },

@@ -13,6 +13,7 @@
   "devDependencies": {
     "@types/jest": "^26.0.21",
     "@types/node": "^14.14.31",
+    "apollo-server": "^3.8.1",
     "eslint": "^7.21.0",
     "jest": "^26.6.3",
     "ts-jest": "^26.5.4",
@@ -31,5 +32,11 @@
     "collectCoverageFrom": [
       "src/**/*.ts"
     ]
+  },
+  "dependencies": {
+    "graphql": "^16.5.0"
+  },
+  "peerDependencies": {
+    "graphql": "^16"
   }
 }
