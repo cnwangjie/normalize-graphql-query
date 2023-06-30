@@ -2,7 +2,43 @@
 
 ### Usage
 
-TBD
+**Apollo Server**
+
+```diff
++ import { apolloPlugin as normalize } from 'normalize-graphql-query'
+
+  export const createServer = () => {
+    const schema = makeExecutableSchema({ typeDefs, resolvers })
+    const server = new ApolloServer({
+      schema,
+      plugins: [
++      normalize(), // <-- just add this plugin
+      ],
+    })
+    return { server, schema }
+  }
+```
+
+**Other GraphQL Server**
+
+```ts
+import {
+  normalizeGraphQLQuery,
+  transformGraphQLResponse,
+} from 'normalize-graphql-query'
+
+// normalize the query & variables of the request
+const normalized = normalizeGraphQLQuery({
+  query,
+  variables,
+})
+
+// then you can use it to execute the query
+const response = await server.executeOperation(normalized)
+
+// transform the response data to satisfy the original query
+const data = transformGraphQLResponse(normalized, response.data)
+```
 
 ### Why you need it
 
@@ -75,3 +111,7 @@ query task($id: ID!) {
 ![clap](https://media3.giphy.com/media/1236TCtX5dsGEo/giphy.gif?cid=ecf05e4704julcaak3xc1mwxtj7tinh7ppewjk1xezyx4k4p&ep=v1_gifs_search&rid=giphy.gif&ct=g)
 
 You will get the same query if their structure is the same.
+
+### License
+
+MIT License

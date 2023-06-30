@@ -1,11 +1,11 @@
 import { BREAK, DocumentNode, Kind, parse, print, visit } from 'graphql'
 
-interface NormalizeGraphQLQueryArgs {
+export interface NormalizeGraphQLQueryArgs {
   query: string | DocumentNode
   variables?: Record<string, any>
 }
 
-interface NormalizeGraphQLQueryResult {
+export interface NormalizeGraphQLQueryResult {
   ast: DocumentNode
   query: string
   variables?: Record<string, any>
@@ -218,7 +218,7 @@ const _transformGraphQLResponseData = (
   data: unknown,
   fieldAliasMap: Map<string, Map<string, string>>,
   path: ReadonlyArray<string> = [],
-): unknown => {
+): any => {
   if (!data) return data
   if (Array.isArray(data)) {
     return data.map(item =>
@@ -250,3 +250,5 @@ export const transformGraphQLResponse = (
   }
   return data
 }
+
+export { default as apolloPlugin } from './apollo-plugin'
