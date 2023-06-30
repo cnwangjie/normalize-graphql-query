@@ -1,34 +1,19 @@
-import crypto from 'crypto'
-import normalizeGraphQLQuery from '../src'
-import { createTestServer } from './test-server'
-
-const messUpQuery = (query: string, variables: Record<string, any>) => {
-  const messedUpVariables = {} as Record<string, any>
-  let messedUpQuery = query
-  for (const k in variables) {
-    const newKey = `_${crypto.randomBytes(8).toString('hex')}${k}`
-    messedUpVariables[newKey] = variables[k]
-    messedUpQuery = messedUpQuery.replaceAll(k, newKey)
-  }
-  return {
-    query: messedUpQuery,
-    variables: messedUpVariables,
-  }
-}
+import { createEchoServer } from './test-server'
+import { generateVariables, shouldReturnSameValueWithOriginal } from './util'
 
 describe('normalizeGraphQLQuery', () => {
-  const testServer = createTestServer()
+  const { server: echoServer, schema: echoSchema } = createEchoServer()
 
-  it('should return same value with original', async () => {
+  test('simple case', async () => {
     const testQuery = `#graphql
       query Query(
-        $__a: String
-        $__b: String
-        $__c: String
-        $__d: Int
-        $__e: Int
-        $__f: Float
-        $__g: Boolean
+        $__a: String!
+        $__b: String!
+        $__c: String!
+        $__d: Int!
+        $__e: Int!
+        $__f: Float!
+        $__g: Boolean!
       ) {
         echo(input: {
           a: $__a
@@ -50,22 +35,84 @@ describe('normalizeGraphQLQuery', () => {
       }
     `
 
-    const testVariables = {
-      __a: Math.random() + '',
-      __b: Math.random() + '',
-      __c: Math.random() + '',
-      __d: (Math.random() * 1e10) | 0,
-      __e: (Math.random() * 1e10) | 0,
-      __f: Math.random(),
-      __g: Math.random() > 0.5,
-    }
+    const testVariables = generateVariables(echoSchema, testQuery)
 
-    const messedUpReq = messUpQuery(testQuery, testVariables)
-    const res = await testServer.executeOperation(messedUpReq)
-    const { data: expected } = res
-    const normalized = normalizeGraphQLQuery(messedUpReq)
-    const { data: actual } = await testServer.executeOperation(normalized)
-    expect(expected).toBeTruthy()
-    expect(actual).toEqual(expected)
+    await shouldReturnSameValueWithOriginal(
+      echoServer,
+      testQuery,
+      testVariables,
+    )
+  })
+
+  test('same name variables', async () => {
+    const testQuery = `#graphql
+      query Query(
+        $__a1: String!
+        $__a2: String!
+      ) {
+        echo1: echo(input: {
+          a: $__a1
+        }) {
+          a
+        }
+
+        echo2: echo(input: {
+          a: $__a2
+        }) {
+          a
+        }
+      }
+    `
+
+    const testVariables = generateVariables(echoSchema, testQuery)
+
+    await shouldReturnSameValueWithOriginal(
+      echoServer,
+      testQuery,
+      testVariables,
+    )
+  })
+
+  test('nested same name variables', async () => {
+    const testQuery = `#graphql
+      query (
+        $__a1: String!
+        $__a2: String!
+        $__a3: String!
+        $__a4: String!
+      ) {
+        echo1: echo(input: {
+          k: {
+            a: $__a1
+          }
+          a: $__a2
+        }) {
+          k {
+            a
+          }
+          a
+        }
+
+        echo2: echo(input: {
+          k: {
+            a: $__a3
+          }
+          a: $__a4
+        }) {
+          k {
+            a
+          }
+          a
+        }
+      }
+    `
+
+    const testVariables = generateVariables(echoSchema, testQuery)
+
+    await shouldReturnSameValueWithOriginal(
+      echoServer,
+      testQuery,
+      testVariables,
+    )
   })
 })

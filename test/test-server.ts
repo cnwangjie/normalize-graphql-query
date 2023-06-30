@@ -1,3 +1,4 @@
+import { makeExecutableSchema } from '@graphql-tools/schema'
 import { ApolloServer } from 'apollo-server'
 
 const typeDefs = `#graphql
@@ -9,6 +10,13 @@ const typeDefs = `#graphql
     e: Int
     f: Float
     g: Boolean
+    h: [String]
+    i: [Int!]
+    j: [Float!]
+    k: EchoInput
+    l: [EchoInput]
+    m: [[EchoInput]]
+    n: [[EchoInput!]!]
   }
 
   type EchoRes {
@@ -19,6 +27,13 @@ const typeDefs = `#graphql
     e: Int
     f: Float
     g: Boolean
+    h: [String]
+    i: [Int!]
+    j: [Float!]
+    k: EchoRes
+    l: [EchoRes]
+    m: [[EchoRes]]
+    n: [[EchoRes!]!]
   }
 
   type Query {
@@ -32,10 +47,10 @@ const resolvers = {
   },
 }
 
-export const createTestServer = () => {
+export const createEchoServer = () => {
+  const schema = makeExecutableSchema({ typeDefs, resolvers })
   const server = new ApolloServer({
-    typeDefs,
-    resolvers,
+    schema,
   })
-  return server
+  return { server, schema }
 }
