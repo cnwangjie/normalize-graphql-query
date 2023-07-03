@@ -1,6 +1,9 @@
 # Normalize GraphQL Query
 
-### Usage
+[![Build](https://github.com/cnwangjie/normalize-graphql-query/actions/workflows/build.yaml/badge.svg)](https://github.com/cnwangjie/normalize-graphql-query/actions/workflows/build.yaml)
+[![npm](https://img.shields.io/npm/v/normalize-graphql-query)](https://www.npmjs.com/package/normalize-graphql-query)
+
+## Usage
 
 **Apollo Server**
 
@@ -40,7 +43,7 @@ const response = await server.executeOperation(normalized)
 const data = transformGraphQLResponse(normalized, response.data)
 ```
 
-### Why you need it
+## Why you need it
 
 Consider you have a GraphQL API like this.
 
@@ -112,6 +115,6 @@ query task($id: ID!) {
 
 You will get the same query if their structure is the same.
 
-### License
+## License
 
 MIT License

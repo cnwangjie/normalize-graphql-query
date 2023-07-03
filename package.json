@@ -1,12 +1,9 @@
 {
   "name": "normalize-graphql-query",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "types/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "repository": "https://github.com/cnwangjie/normalize-graphql-query.git",
   "author": "Wang Jie <i@i8e.net>",
   "license": "MIT",

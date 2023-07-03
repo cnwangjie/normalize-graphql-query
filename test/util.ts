@@ -22,7 +22,7 @@ export const messUpVariables = (
   for (const k in variables) {
     const newKey = `_${crypto.randomBytes(8).toString('hex')}${k}`
     messedUpVariables[newKey] = variables[k]
-    messedUpQuery = messedUpQuery.replaceAll(k, newKey)
+    messedUpQuery = messedUpQuery.replaceAll(`$${k}`, `$${newKey}`)
   }
 
   return {
