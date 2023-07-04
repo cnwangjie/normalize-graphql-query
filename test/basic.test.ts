@@ -1,3 +1,4 @@
+import { randomBytes } from 'crypto'
 import { createEchoServer } from './test-server'
 import { generateVariables, shouldReturnSameValueWithOriginal } from './util'
 
@@ -108,6 +109,34 @@ describe('normalizeGraphQLQuery', () => {
     `
 
     const testVariables = generateVariables(echoSchema, testQuery)
+
+    await shouldReturnSameValueWithOriginal(
+      echoServer,
+      testQuery,
+      testVariables,
+    )
+  })
+
+  test('fixture#1 - unused variables', async () => {
+    const testQuery = `#graphql
+      query Query(
+        $a: String!
+        $b: String!
+      ) {
+        echo(input: {
+          a: $a
+          b: $b
+        }) {
+          a
+          b
+        }
+      }
+    `
+
+    const testVariables = {
+      ...generateVariables(echoSchema, testQuery),
+      [randomBytes(8).toString('hex')]: 'unused',
+    }
 
     await shouldReturnSameValueWithOriginal(
       echoServer,

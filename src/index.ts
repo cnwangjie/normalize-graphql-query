@@ -86,10 +86,7 @@ export const normalizeVariableName = (
 
   const normalizeName = (name: string) => {
     const normalizedName = oriNameMap.get(name)
-    if (!normalizedName)
-      throw new Error(
-        `Failed to normalize query. Unresolved variable name: '${name}'.`,
-      )
+    if (!normalizedName) return name
     return normalizedName
   }
 
