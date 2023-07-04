@@ -1,4 +1,5 @@
 import { BREAK, DocumentNode, Kind, parse, print, visit } from 'graphql'
+import { isPlainObject } from './is-plain-object'
 
 export interface NormalizeGraphQLQueryArgs {
   query: string | DocumentNode
@@ -222,7 +223,7 @@ const _transformGraphQLResponseData = (
       _transformGraphQLResponseData(item, fieldAliasMap, path),
     )
   }
-  if (typeof data === 'object') {
+  if (isPlainObject(data)) {
     const result: Record<string, any> = {}
     for (const [k, v] of Object.entries(data)) {
       const aliasMap = fieldAliasMap.get(path.join('.'))

@@ -144,4 +144,29 @@ describe('normalizeGraphQLQuery', () => {
       testVariables,
     )
   })
+
+  test('fixture#2 - date scalar type', async () => {
+    const testQuery = `#graphql
+      query Query(
+        $a: String!
+        $o: Date!
+      ) {
+        echo(input: {
+          a: $a
+          o: $o
+        }) {
+          a
+          o
+        }
+      }
+    `
+
+    const testVariables = generateVariables(echoSchema, testQuery)
+
+    await shouldReturnSameValueWithOriginal(
+      echoServer,
+      testQuery,
+      testVariables,
+    )
+  })
 })

@@ -17,6 +17,7 @@ const typeDefs = `#graphql
     l: [EchoInput]
     m: [[EchoInput]]
     n: [[EchoInput!]!]
+    o: Date
   }
 
   type EchoRes {
@@ -34,10 +35,17 @@ const typeDefs = `#graphql
     l: [EchoRes]
     m: [[EchoRes]]
     n: [[EchoRes!]!]
+    o: Date
   }
 
   type Query {
     echo(input: EchoInput): EchoRes
+  }
+
+  scalar Date
+
+  schema {
+    query: Query
   }
 `
 

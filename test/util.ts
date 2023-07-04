@@ -82,6 +82,7 @@ const genVariable = (
     if (t === 'Int') return (Math.random() * 1e10) | 0
     if (t === 'Float') return Math.random()
     if (t === 'Boolean') return Math.random() > 0.5
+    if (t === 'Date') return new Date().toISOString()
     return genVariableForType(schema, t, nonNullable)
   }
 
