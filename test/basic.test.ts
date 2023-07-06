@@ -169,4 +169,44 @@ describe('normalizeGraphQLQuery', () => {
       testVariables,
     )
   })
+
+  test('fixture#3 - fragment', async () => {
+    const testQuery = `#graphql
+      query Query(
+        $a1: String!
+        $a2: String!
+        $b: String!
+      ) {
+        echo(input: {
+          a: $a1
+          k: {
+            a: $a2
+            b: $b
+          }
+        }) {
+          ...a
+        }
+      }
+
+      fragment a on EchoRes {
+        a
+        k {
+          ...k
+        }
+      }
+
+      fragment k on EchoRes {
+        a
+        b
+      }
+    `
+
+    const testVariables = generateVariables(echoSchema, testQuery)
+
+    await shouldReturnSameValueWithOriginal(
+      echoServer,
+      testQuery,
+      testVariables,
+    )
+  })
 })

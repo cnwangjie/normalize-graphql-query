@@ -45,6 +45,11 @@ export const messUpAccessFields = (query: string) => {
       }
       return newField
     },
+    FragmentDefinition: {
+      enter() {
+        return false
+      },
+    },
   })
 
   return print(messedUpAst)

@@ -20,43 +20,49 @@ export const normalizeFieldAccess = (ast: DocumentNode) => {
   const fieldAliasMap: Map<string, Map<string, string>> = new Map()
 
   const normalizedAst = visit(ast, {
-    enter(node) {
-      if (node.kind === 'Field') {
-        const fieldName = node.name.value
-        const alias = node.alias?.value
+    Field: {
+      enter(node) {
+        if (node.kind === 'Field') {
+          const fieldName = node.name.value
+          const alias = node.alias?.value
 
-        const path = [...stack].join('.')
+          const path = [...stack].join('.')
 
-        const accessCountMap =
-          fieldAccessMap.get([...stack].join('.')) ?? new Map()
-        const accessCount = accessCountMap.get(fieldName) || 0
-        accessCountMap.set(fieldName, accessCount + 1)
-        fieldAccessMap.set(path, accessCountMap)
+          const accessCountMap =
+            fieldAccessMap.get([...stack].join('.')) ?? new Map()
+          const accessCount = accessCountMap.get(fieldName) || 0
+          accessCountMap.set(fieldName, accessCount + 1)
+          fieldAccessMap.set(path, accessCountMap)
 
-        const newAlias = accessCount ? `${fieldName}${accessCount}` : fieldName
+          const newAlias = accessCount
+            ? `${fieldName}${accessCount}`
+            : fieldName
 
-        const aliasMap = fieldAliasMap.get(path) ?? new Map()
-        fieldAliasMap.set(path, aliasMap)
-        aliasMap.set(newAlias, alias ?? '')
+          const aliasMap = fieldAliasMap.get(path) ?? new Map()
+          fieldAliasMap.set(path, aliasMap)
+          aliasMap.set(newAlias, alias ?? '')
 
-        stack.push(alias ?? fieldName)
+          stack.push(alias ?? fieldName)
 
-        return {
-          ...node,
-          alias: accessCount
-            ? {
-                kind: Kind.NAME,
-                value: newAlias,
-              }
-            : undefined,
+          return {
+            ...node,
+            alias: accessCount
+              ? {
+                  kind: Kind.NAME,
+                  value: newAlias,
+                }
+              : undefined,
+          }
         }
-      }
-    },
-
-    leave(node) {
-      if (node.kind === 'Field') {
+      },
+      leave() {
         stack.pop()
-      }
+      },
+    },
+    FragmentDefinition: {
+      enter() {
+        return false
+      },
     },
   })
 
