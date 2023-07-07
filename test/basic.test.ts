@@ -6,7 +6,7 @@ describe('normalizeGraphQLQuery', () => {
   const { server: echoServer, schema: echoSchema } = createEchoServer()
 
   test('simple case', async () => {
-    const testQuery = `#graphql
+    const testQuery = /* GraphQL */ `
       query Query(
         $__a: String!
         $__b: String!
@@ -16,15 +16,17 @@ describe('normalizeGraphQLQuery', () => {
         $__f: Float!
         $__g: Boolean!
       ) {
-        echo(input: {
-          a: $__a
-          b: $__b
-          c: $__c
-          d: $__d
-          e: $__e
-          f: $__f
-          g: $__g
-        }) {
+        echo(
+          input: {
+            a: $__a
+            b: $__b
+            c: $__c
+            d: $__d
+            e: $__e
+            f: $__f
+            g: $__g
+          }
+        ) {
           a
           b
           c
@@ -46,20 +48,13 @@ describe('normalizeGraphQLQuery', () => {
   })
 
   test('same name variables', async () => {
-    const testQuery = `#graphql
-      query Query(
-        $__a1: String!
-        $__a2: String!
-      ) {
-        echo1: echo(input: {
-          a: $__a1
-        }) {
+    const testQuery = /* GraphQL */ `
+      query Query($__a1: String!, $__a2: String!) {
+        echo1: echo(input: { a: $__a1 }) {
           a
         }
 
-        echo2: echo(input: {
-          a: $__a2
-        }) {
+        echo2: echo(input: { a: $__a2 }) {
           a
         }
       }
@@ -118,15 +113,9 @@ describe('normalizeGraphQLQuery', () => {
   })
 
   test('fixture#1 - unused variables', async () => {
-    const testQuery = `#graphql
-      query Query(
-        $a: String!
-        $b: String!
-      ) {
-        echo(input: {
-          a: $a
-          b: $b
-        }) {
+    const testQuery = /* GraphQL */ `
+      query Query($a: String!, $b: String!) {
+        echo(input: { a: $a, b: $b }) {
           a
           b
         }
@@ -146,15 +135,9 @@ describe('normalizeGraphQLQuery', () => {
   })
 
   test('fixture#2 - date scalar type', async () => {
-    const testQuery = `#graphql
-      query Query(
-        $a: String!
-        $o: Date!
-      ) {
-        echo(input: {
-          a: $a
-          o: $o
-        }) {
+    const testQuery = /* GraphQL */ `
+      query Query($a: String!, $o: Date!) {
+        echo(input: { a: $a, o: $o }) {
           a
           o
         }
@@ -171,19 +154,9 @@ describe('normalizeGraphQLQuery', () => {
   })
 
   test('fixture#3 - fragment', async () => {
-    const testQuery = `#graphql
-      query Query(
-        $a1: String!
-        $a2: String!
-        $b: String!
-      ) {
-        echo(input: {
-          a: $a1
-          k: {
-            a: $a2
-            b: $b
-          }
-        }) {
+    const testQuery = /* GraphQL */ `
+      query Query($a1: String!, $a2: String!, $b: String!) {
+        echo(input: { a: $a1, k: { a: $a2, b: $b } }) {
           ...a
         }
       }
@@ -198,6 +171,33 @@ describe('normalizeGraphQLQuery', () => {
       fragment k on EchoRes {
         a
         b
+      }
+    `
+
+    const testVariables = generateVariables(echoSchema, testQuery)
+
+    await shouldReturnSameValueWithOriginal(
+      echoServer,
+      testQuery,
+      testVariables,
+    )
+  })
+
+  test('fixture#4 - fill operation name when fragment before operation', async () => {
+    const testQuery = /* GraphQL */ `
+      fragment a on EchoRes {
+        a
+        b
+      }
+
+      query ($a1: String!, $a2: String!, $b: String!) {
+        echo(input: { a: $a1, k: { a: $a2, b: $b } }) {
+          ...a
+
+          k {
+            ...a
+          }
+        }
       }
     `
 

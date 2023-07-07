@@ -141,40 +141,46 @@ export const normalizeVariableName = (
 }
 
 export const fillQueryOperationName = (ast: DocumentNode) => {
-  let hasName = false
-  let operationName = ''
+  let inOperation = false
+  const operationNames: (string | null)[] = []
+
   visit(ast, {
     OperationDefinition: {
       enter(node) {
+        inOperation = true
         if (node.name) {
-          hasName = true
+          operationNames.push(null)
           return BREAK
         }
+      },
+      leave() {
+        inOperation = false
       },
     },
     Field: {
       enter(node) {
-        operationName = node.name.value
+        if (!inOperation) return
+        operationNames.push(node.name.value)
         return BREAK
       },
     },
   })
 
-  if (hasName) return ast
+  let index = 0
 
   return visit(ast, {
     OperationDefinition: {
       enter(node) {
+        const operationName = operationNames[index]
+        index += 1
+        if (!operationName) return false
         return {
           ...node,
           name: {
             kind: Kind.NAME,
-            value: operationName,
+            value: operationNames,
           },
         }
-      },
-      leave() {
-        return BREAK
       },
     },
   })
